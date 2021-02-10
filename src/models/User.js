@@ -2,7 +2,6 @@ const mongoose = require('mongoose')
 const validator = require('validator')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
-const Task = require('./task')
 
 const userSchema = new mongoose.Schema({
     name: {
@@ -42,6 +41,11 @@ const userSchema = new mongoose.Schema({
             }
         }
     },
+    // User can have many recipes
+    recipesFromUser: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Recipes"
+    }],
     tokens: [{
         token: {
             type: String,
@@ -110,6 +114,4 @@ userSchema.pre('remove', async function (next) {
     next()
 })
 
-const User = mongoose.model('User', userSchema)
-
-module.exports = User
+module.exports = mongoose.model('User', userSchema)
