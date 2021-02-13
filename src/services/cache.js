@@ -39,15 +39,15 @@ mongoose.Query.prototype.exec = async function() {
 
     const result = await exec.apply(this, arguments);
     
-    client.hmset(this.hashKey, key, JSON.stringify(result), 'EX', 300);
-
+    client.hmset(this.hashKey, key, JSON.stringify(result), 'EX', 3);
+    client.expire(this.hashKey, 150); //cache expires every 150 sec
     console.log('Data Source: Database');
     return result;
 };
 
 module.exports = {
     clearCache(hashKey) {
-        console.log('Cache cleaned');
-        client.del(JSON.stringify(hashKey));
+    console.log('Cache cleaned');
+    client.del(JSON.stringify(hashKey));
     }
 }

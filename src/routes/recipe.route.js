@@ -1,6 +1,7 @@
 const express = require("express");
 const User = require("../models/User");
 const Recipe = require("../models/Recipe");
+const cleanCache = require('../middleware/cleanCache');
 const router = express.Router();
 
 router.get("/recipes", async (req, res, next) => {
@@ -10,7 +11,7 @@ router.get("/recipes", async (req, res, next) => {
 
 // find all recipes by author's name
 router.get("/recipes/:name", async (req, res, next) => {
-  const recipes = await Recipe.findOne({ author: req.params.name }).cache({key: req.params.recipe});
+  const recipes = await Recipe.find({ author: req.params.name }).cache();
   res.send(recipes)
 });
 
