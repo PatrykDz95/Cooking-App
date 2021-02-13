@@ -5,27 +5,29 @@ const cleanCache = require('../middleware/cleanCache');
 const auth = require('../middleware/auth')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
+const { sendWelcomeEmail } = require('../email/account')
 
 router.get("/users", async (req, res, next) => {
     const users = await User.find();
 	res.send(users);
-})
+});
 
 router.get("/users/:id", async (req, res, next) => {
 	const users = await User.findOne({ _id: req.params.id }).populate("Recipes").cache({key: req.params.user});
 	res.send(users)
-})
+});
 
 router.post('/user', async (req, res) => {
     const user = new User(req.body);
     try {
         await user.save();
+		sendWelcomeEmail(user.email, user.name);
         const token = await user.generateAuthToken();
         res.status(201).send({ user, token });
     } catch (e) {
         res.status(400).send(e);
     }
-})
+});
 
 
 router.post('/users/login', async (req, res) => {
@@ -81,7 +83,7 @@ router.post('/users/logout', auth, async (req, res) => {
     } catch (e) {
         res.status(500).send();
     }
-})
+});
 
 // router.post("/users", cleanCache, async (req, res, next) => {
 // 	const users = new User({
