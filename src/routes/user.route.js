@@ -6,9 +6,14 @@ const auth = require('../middleware/auth')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 
+router.get("/users", async (req, res, next) => {
+    const users = await User.find();
+	res.send(users);
+})
 
-router.get('/users/me', auth, async (req, res) => {
-    res.send(req.user);
+router.get("/users/:id", async (req, res, next) => {
+	const users = await User.findOne({ _id: req.params.id }).populate("Recipes").cache({key: req.params.user});
+	res.send(users)
 })
 
 router.post('/user', async (req, res) => {
@@ -76,16 +81,6 @@ router.post('/users/logout', auth, async (req, res) => {
     } catch (e) {
         res.status(500).send();
     }
-})
-
-router.get("/users", async (req, res, next) => {
-    const users = await User.find();
-	res.send(users);
-})
-
-router.get("/users/:id", async (req, res, next) => {
-	const users = await User.findOne({ _id: req.params.id }).populate("Recipes").cache({key: req.params.user});
-	res.send(users)
 })
 
 // router.post("/users", cleanCache, async (req, res, next) => {

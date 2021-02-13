@@ -1,17 +1,16 @@
 const express = require("express");
 const User = require("../models/User");
-const Recipe = require("../models/recipe");
+const Recipe = require("../models/Recipe");
 const router = express.Router();
-const bcrypt = require('bcryptjs')
-
 
 router.get("/recipes", async (req, res, next) => {
-  const recipes = await Recipe.find().cache();
+  const recipes = await Recipe.find();//.cache();
   res.send(recipes);
 });
 
-router.get("/recipes/:id", async (req, res, next) => {
-  const recipes = await Recipe.findOne({ _id: req.params.id }).cache({key: req.params.recipe});
+// find all recipes by author's name
+router.get("/recipes/:name", async (req, res, next) => {
+  const recipes = await Recipe.findOne({ author: req.params.name }).cache({key: req.params.recipe});
   res.send(recipes)
 });
 
