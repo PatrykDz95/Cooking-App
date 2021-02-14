@@ -11,7 +11,7 @@ router.get("/recipes", async (req, res, next) => {
 
 // find all recipes by author's name
 router.get("/recipes/:name", async (req, res, next) => {
-  const recipes = await Recipe.find({ author: req.params.name }).cache();
+  const recipes = await Recipe.find({ author: req.params.name });//.cache();
   res.send(recipes)
 });
 
@@ -19,14 +19,13 @@ router.post("/addRecipe/:id", function(req, res) {
     // Create a new note and pass the req.body to the entry
     Recipe.create(req.body)
       .then(function(dbRecipes) {
-        console.log("\n>> Created dbRecipes:\n", dbRecipes);
         // If a Recipe was created successfully, find one User with an `_id` equal to `req.params.id`. Update the User to be associated with the new Review
         // { new: true } tells the query that we want it to return the updated User -- it returns the original by default
         // Since our mongoose query returns a promise, we can chain another `.then` which receives the result of the query
         return User.findByIdAndUpdate(
           { _id: req.params.id }, 
           {$push: {recipesFromUser: dbRecipes._id}}, 
-          { new: true, useFindAndModify: false });
+          { new: true});
       })
       .then(function(dbUser) {
         // If we were able to successfully update User, send it back
@@ -36,6 +35,5 @@ router.post("/addRecipe/:id", function(req, res) {
         res.json(err);
       });
 });
-
 
 module.exports = router;

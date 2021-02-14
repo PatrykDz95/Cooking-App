@@ -1,13 +1,22 @@
-const mongoose = require('mongoose')
-const validator = require('validator')
-const bcrypt = require('bcryptjs')
-const jwt = require('jsonwebtoken')
+const mongoose = require('mongoose');
+const validator = require('validator');
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+const Filter = require('bad-words');
+
+const filter = new Filter();
 
 const userSchema = new mongoose.Schema({
     name: {
         type: String,
+        unique: true,
         required: true,
-        trim: true
+        trim: true,
+        validate(value) {
+            if (filter.isProfane(value)) {
+                throw new Error('No Profanity')
+            }
+        }
     },
     email: {
         type: String,
